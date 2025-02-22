@@ -1,0 +1,151 @@
+#!/bin/sh
+
+# SOURCE: https://codeberg.org/Liassica/nixos-config/src/branch/main/systems/modules/kernels/common.nix
+# SOURCE: https://madaidans-insecurities.github.io/guides/linux-hardening.html
+# SOURCE: https://github.com/secureblue/secureblue/blob/live/config/files/usr/etc/sysctl.d/hardening.conf
+# SOURCE: https://github.com/a13xp0p0v/kernel-hardening-checker/
+# SOURCE: https://github.com/DSU-DefSec/ace/blob/master/linux/harden/kernel.sh
+# SOURCE: https://wiki.archlinux.org/title/Security
+# SOURCE: https://wiki.archlinux.org/title/Sysctl
+# SOURCE: https://wiki.archlinux.org/title/Core_dump
+
+sudo echo "\
+  ## CATEGORY: Kernel self-protection
+  ## REASONING: The Linux kernel has many built in security features
+
+  # PROTECTION: Mitigate kernel pointer leaks
+  # REASONING: Kernel pointers can be used to assist in exploiting the kernel
+  kernel.kptr_restrict = 2
+
+  # PROTECTION: Restrict dmesg
+  # REASONING: Can expose kernel pointers to unprivileged users
+  kernel.dmesg_restrict = 1
+
+  # PROTECTION: Disable kernel log on boot
+  # REASONING: Can expose kernel pointers
+  kernel.printk = 3 3 3 3
+
+  # PROTECTION: Disable unprivileged BPF
+  # REASONING: Large kernel interface that can be exploited by unprivileged users
+  kernel.unprivileged_bpf_disabled = 1
+
+  # PROTECTION: Harden BPF JIT
+  # REASONING: Prevent users from exploiting interface
+  net.core.bpf_jit_harden = 2
+
+  # PROTECTION: Disable kexec
+  # REASONING: Can be used to replace the current kernel image with a malicious one
+  kernel.kexec_load_disabled = 1
+
+  # PROTECTION: Disable core core dumps
+  # REASONING: Can leak sensitive details of running processes
+  kernel.core_pattern = /bin/false/
+
+  # PROTECTION: Prevent unprivileged attackers from loading vulnerable line disciplines
+  #             with the TIOCSETD ioctl
+  # REASONING: Has been exploited in the past
+  dev.tty.ldisc_autoload = 0
+
+  # PROTECTION: Restrict userfaultfd to CAP_SYS_PTRACE
+  # REASONING: Used to exploit use-after-free
+  vm.unprivileged_userfaultfd = 0
+
+  # PROTECTION: Disable 'Magic SysRq' key
+  # REASONING: Allows unprivileged users access to dangerous debugging options
+  kernel.sysrq = 0
+
+  # PROTECTION: Disable unprivileged user namespaces
+  # REASONING: Highly vulnerable unprivileged kernel interface
+  kernel.unprivileged_userns_clone = 0
+
+  ## CATEGORY: Networking
+  ## REASONING: All of our systems will be networked
+
+  # PROTECTION: Enable 'syncookies' fallback 
+  # REASONING: Avoid SYN flood DOS attacks
+  net.ipv4.tcp_syncookies = 1
+
+  # PROTECTION: Enable RFC1337 behavior
+  # REASONING: Protect against time-wait assasination
+  net.ipv4.tcp_rfc1337 = 1
+
+  # PROTECTION: Do source validation of packets
+  # REASONING: Protect against IP spoofing
+  net.ipv4.conf.all.rp_filter = 1
+  net.ipv4.conf.default.rp_filter = 1
+
+  # PROTECTION: Disable ICMP redirects
+  # REASONING: Possible MITM attack vector, unneeded feature
+  net.ipv4.conf.all.accept_redirects = 0
+  net.ipv4.conf.default.accept_redirects = 0
+  net.ipv4.conf.all.secure_redirects = 0
+  net.ipv4.conf.default.secure_redirects = 0
+  net.ipv6.conf.all.accept_redirects = 0
+  net.ipv6.conf.default.accept_redirects = 0
+  net.ipv4.conf.all.send_redirects = 0
+  net.ipv4.conf.default.send_redirects = 0
+
+  # PROTECTION: Ignore ICMP requests
+  # REASONING: Protect against DOS attacks
+  # TODO: see if causes issues with scoring
+  net.ipv4.icmp_echo_ignore_all = 1
+  net.ipv6.icmp.echo_ignore_all = 1
+
+  # PROTECTION: Disable source routing
+  # REASONING: Protect against MITM
+  net.ipv4.conf.all.accept_source_route = 0
+  net.ipv4.conf.default.accept_source_route = 0
+  net.ipv6.conf.all.accept_source_route = 0
+  net.ipv6.conf.default.accept_source_route = 0
+
+  # PROTECTION: Disable IPv6 router advertisements
+  # REASONING: Protect against MITM
+  net.ipv6.conf.all.accept_ra = 0
+  net.ipv6.conf.default.accept_ra = 0
+
+  # PROTECTION: Disable TCP SACK
+  # REASONING: Exploitable interface, unneeded
+  net.ipv4.tcp_sack=0
+  net.ipv4.tcp_dsack=0
+  net.ipv4.tcp_fack=0
+
+  # PROTECTION: Log Martian packets
+  # REASONING: Detect possible spoofing
+  net.ipv4.conf.all.log_martians = 1
+  net.ipv4.conf.default.log_martians = 1
+
+  ## CATEGORY: User space
+  ## REASONING: The Linux kenrle contains many user space protections
+
+  # PROTECTION: Restrict ptrace scope
+  # REASONING: Can be used to alter program memory
+  kernel.yama.ptrace_scope = 2
+
+  # PROTECTION: Avoid unintentional FIFO and regular file writes
+  # REASONING: Protect against data spoofing
+  fs.protected_fifos = 2
+  fs.protected_regular = 2
+
+  # PROTECTION: Restrict link following
+  # REASONING: Protect against exploiting world writeable directories for privesc
+  fs.protected_symlinks = 1
+  fs.protected_hardlinks = 1
+
+  # PROTECTION: Prevent suid processes from dumping core
+  # REASONING: Can expose sensitive information
+  fs.suid_dumpable = 0
+
+  # PROTECTION: Increase bits for address space layout randomization
+  # REASONING: More effective memory protection
+  vm.mmap_rnd_bits = 32
+  vm.mmap_rnd_compat_bits = 16
+
+  ## Reduce attack surface
+  ## REASONING: Reduce access to exploitable features and interfaces of the kernel
+
+  # PROTECTION: Restrict usage of performace events to CAP_PERFMON
+  kernel.perf_event_paranoid = 3
+
+  # PROTECTION: Disable legacy TIOCSTI
+  dev.tty.legacy_tiocsti = 0
+" >/etc/sysctl.d/zz-ncae.conf

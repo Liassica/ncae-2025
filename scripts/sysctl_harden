@@ -149,3 +149,5 @@ echo "\
   # PROTECTION: Disable legacy TIOCSTI
   dev.tty.legacy_tiocsti = 0
 " >/etc/sysctl.d/zz-ncae.conf
+
+sysctl --system

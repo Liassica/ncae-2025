@@ -9,7 +9,7 @@
 # SOURCE: https://wiki.archlinux.org/title/Sysctl
 # SOURCE: https://wiki.archlinux.org/title/Core_dump
 
-sudo echo "\
+echo "\
   ## CATEGORY: Kernel self-protection
   ## REASONING: The Linux kernel has many built in security features
 

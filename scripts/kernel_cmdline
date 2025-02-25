@@ -91,16 +91,17 @@ CMDLINE=(
 
   ## CATEGORY: Reduce attack surface
   ## REASONING: Reduce access to exploitable features and interfaces of the kernel
-  # Disable debugfs
+
+  # PROTECTION: Disable debugfs
   "debugfs=off"
 
-  # Disable TSX
+  # PROTECTION: Disable TSX
   "tsx=off"
 
-  # Disable vsyscalls
+  # PROTECTION: Disable vsyscalls
   "vsyscall=none"
 
-  # Disallow writing to mounted block devices
+  # PROTECTION: Disallow writing to mounted block devices
   "bdev_allow_write_mounted=0"
 )
 

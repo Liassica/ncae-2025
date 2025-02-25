@@ -51,4 +51,7 @@ iptables -A INPUT -p tcp -j REJECT --reject-with tcp-reset
 # Reject ICMP protocol unreachable messages
 iptables -A INPUT -j REJECT --reject-with icmp-proto-unreachable
 
+if ! [[ -d /etc/iptables ]]; then
+  mkdir -p /etc/iptables/
+fi
 iptables-save -f /etc/iptables/iptables.rules

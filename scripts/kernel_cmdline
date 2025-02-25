@@ -1,0 +1,117 @@
+#!/bin/sh
+
+# SOURCE: https://codeberg.org/Liassica/nixos-config/src/branch/main/systems/modules/kernels/vanilla-common.nix
+# SOURCE: https://madaidans-insecurities.github.io/guides/linux-hardening.html
+# SOURCE: https://github.com/secureblue/secureblue/blob/live/config/files/usr/share/ublue-os/just/60-custom.just.readme.md
+# SOURCE: https://tails.net/contribute/design/kernel_hardening/
+# SOURCE: https://github.com/a13xp0p0v/kernel-hardening-checker/
+# SOURCE: https://kspp.github.io/Recommended_Settings
+
+CMDLINE=(
+## CATEGORY: Kernel self-protection
+## REASONING: The Linux kernel has many built in security features
+
+# PROTECTION: Disable slab merging
+# REASONING: Protect against heap exploitation
+"slab_nomerge"
+
+# PROTECTION: Zero memory during allocation and free time
+# REASONING: Help mitigate use-after-free vulnerabilites
+"init_on_alloc=1"
+"init_on_free=1"
+
+# PROTECTION: Randomize kernel stack offset on each syscall
+# REASONING: Protect against exploits based on deterministic kernel stack layout
+"randomize_kstack_offset=on"
+
+# PROTECTION: Enable kernel lockdown
+# REASONING: Strengthen root-kernel boundary
+# PROTECTION: Enable module signatures
+# REASONING: Increase difficulty of loading malicious module
+"lockdown=confidentiality"
+
+# PROTECTION: Disable trusting of CPU for RNG
+# REASONING: Often insecure implementations
+"random.trust_cpu=off"
+
+# PROTECTION: Enable IOMMU
+# REASONING: Enables memory protections
+"iommu=force"
+"amd_iommu=force_isolation"
+"intel_iommu=on"
+
+# PROTECTION: More IOMMU protections
+# REASONING: uhhh
+# Synchronously invalidate IOMMU hardware TLB
+"iommu.strict=1"
+# Disable IOMMU bypass
+"iommu.passthrough=0"
+# Fix hole in IOMMU
+"efi=disable_early_pci_dma"
+
+# PROTECTION: Hide kernel log during boot
+# REASONING: Can expose kernel pointers
+"quiet"
+
+# PROTECTION: Randomize page allocator freelists
+# REASONING: Make page allocations less predictable
+"page_alloc.shuffle=1"
+
+# PROTECTION: Enable CPU vulnerability mitigations
+# REASONING: Protect against CPU vulnerabilities
+"spectre_v2=auto"
+"spectre_v2_user=auto"
+"spectre_bhi=on"
+"spec_store_bypass_disable=auto"
+"l1tf=flush"
+"mds=full"
+"tsx_async_abort=full"
+"srbds="
+"mmio_stale_data=full"
+"retbleed=auto"
+"spec_rstack_overflow=safe-ret"
+"rodata=on"
+"mitigations=auto"
+
+# PROTECTION: Disable FineIBT
+# REASONING: Weaker than KCFI
+"cfi=kcfi"
+
+# PROTECTION: Enable hardened_usercopy
+# REASONING: protect the kernel from reading or writing beyond known memory allocation boundaries
+"hardened_usercopy=on"
+
+# PROTECTION: Enable KFENCE
+# REASONING: Enables memory saftety error detection
+"kfence.sample_interval=100"
+
+# PROTECTION: Enable page table isolation
+# REASONING: Mitigate Meltdown and ASLR bypasses
+"pti=on"
+
+## CATEGORY: Reduce attack surface
+## REASONING: Reduce access to exploitable features and interfaces of the kernel
+# Disable debugfs
+"debugfs=off"
+
+# Disable TSX
+"tsx=off"
+
+# Disable vsyscalls
+"vsyscall=none"
+
+# Disallow writing to mounted block devices
+"bdev_allow_write_mounted=0"
+)
+
+if type grub &> /dev/null; then
+  # nightmare nightmare nightmare
+  sed -i "s#GRUB_CMDLINE_LINUX=\"\"#GRUB_CMDLINE_LINUX=\"$(echo ${CMDLINE[@]})\"#" /etc/default/grub
+  grub-mkconfig -o /boot/grub/grub.cfg
+elif type bootctl &> /dev/null; then
+  DIR="efi"
+  if [[ -d /boot/efi ]]; then
+    DIR="boot/$DIR"
+  fi
+  sed -i "/options / s/$/ $(echo ${CMDLINE[@]})/" /$DIR/loader/entries/*.conf
+fi

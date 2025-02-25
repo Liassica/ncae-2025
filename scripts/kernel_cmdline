@@ -103,6 +103,10 @@ CMDLINE=(
 
   # PROTECTION: Disallow writing to mounted block devices
   "bdev_allow_write_mounted=0"
+
+  # PROTECTION: Disable IPv6
+  # REASONING: Not needed for comp
+  "ipv6.disable=1"
 )
 
 if type grub-mkconfig &>/dev/null; then

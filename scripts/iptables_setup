@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # SOURCE: https://wiki.archlinux.org/title/Simple_stateful_firewall
 
 # Load empty rules

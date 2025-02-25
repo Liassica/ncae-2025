@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # SOURCE: https://codeberg.org/Liassica/nixos-config/src/branch/main/systems/modules/kernels/common.nix
 # SOURCE: https://madaidans-insecurities.github.io/guides/linux-hardening.html

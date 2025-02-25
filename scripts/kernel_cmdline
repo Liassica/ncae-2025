@@ -104,7 +104,7 @@ CMDLINE=(
   "bdev_allow_write_mounted=0"
 )
 
-if type grub &>/dev/null; then
+if type grub-mkconfig &>/dev/null; then
   # nightmare nightmare nightmare
   sed -i "s#GRUB_CMDLINE_LINUX=\"\"#GRUB_CMDLINE_LINUX=\"$(echo ${CMDLINE[@]})\"#" /etc/default/grub
   grub-mkconfig -o /boot/grub/grub.cfg

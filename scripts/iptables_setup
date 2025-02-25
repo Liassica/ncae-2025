@@ -2,7 +2,13 @@
 # SOURCE: https://wiki.archlinux.org/title/Simple_stateful_firewall
 
 # Load empty rules
-iptables-restore </etc/iptables/empty.rules
+cat <<EOF | iptables-restore
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+COMMIT
+EOF
 
 # Create TCP and UDP chains
 iptables -N TCP

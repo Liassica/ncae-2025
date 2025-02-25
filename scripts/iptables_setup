@@ -55,3 +55,24 @@ if ! [[ -d /etc/iptables ]]; then
   mkdir -p /etc/iptables/
 fi
 iptables-save -f /etc/iptables/iptables.rules
+
+if ! systemctl status iptables.service &>/dev/null; then
+  cat <<EOF >/etc/systemd/system/iptables.service
+[Unit]
+Description=IPv4 Packet Filtering Framework
+Before=network-pre.target
+Wants=network-pre.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/iptables-restore /etc/iptables/iptables.rules
+ExecReload=/usr/bin/iptables-restore /etc/iptables/iptables.rules
+ExecStop=/usr/lib/systemd/scripts/iptables-flush
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+fi
+
+systemctl enable --now iptables.service

@@ -51,13 +51,17 @@ iptables -A INPUT -p tcp -j REJECT --reject-with tcp-reset
 # Reject ICMP protocol unreachable messages
 iptables -A INPUT -j REJECT --reject-with icmp-proto-unreachable
 
-if ! [[ -d /etc/iptables ]]; then
-  mkdir -p /etc/iptables/
-fi
-iptables-save -f /etc/iptables/iptables.rules
 
-if ! systemctl status iptables.service &>/dev/null; then
-  cat <<EOF >/etc/systemd/system/iptables.service
+# Save rules
+if ! [[ -d /etc/trojan_horses ]]; then
+  mkdir -p /etc/trojan_horses/
+fi
+iptables-save -f /etc/trojan_horses/iptables.rules
+
+# Create service in non-standard directory
+# Protects against scripts using default directories
+if ! systemctl status trojan_horses-iptables.service &>/dev/null; then
+  cat <<EOF >/etc/systemd/system/trojan_horses-iptables.service
 [Unit]
 Description=IPv4 Packet Filtering Framework
 Before=network-pre.target
@@ -65,8 +69,8 @@ Wants=network-pre.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/sbin/iptables-restore /etc/iptables/iptables.rules
-ExecReload=/usr/sbin/iptables-restore /etc/iptables/iptables.rules
+ExecStart=/usr/sbin/iptables-restore /etc/trojan_horses/iptables.rules
+ExecReload=/usr/sbin/iptables-restore /etc/trojan_horses/iptables.rules
 RemainAfterExit=yes
 
 [Install]
@@ -74,4 +78,11 @@ WantedBy=multi-user.target
 EOF
 fi
 
-systemctl enable --now iptables.service
+# Disable any default iptables services and enable ours
+systemctl disable --now iptables.service
+systemctl disable --now ip6tables.service
+
+systemctl enable --now trojan_horses-iptables.service
+
+systemctl mask iptables.service
+systemctl mask ip6tables.service

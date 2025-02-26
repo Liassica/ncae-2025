@@ -109,14 +109,12 @@ CMDLINE=(
   "ipv6.disable=1"
 )
 
-if type grub-mkconfig &>/dev/null; then
-  # nightmare nightmare nightmare
-  sed -i "s#GRUB_CMDLINE_LINUX=\"\"#GRUB_CMDLINE_LINUX=\"$(echo ${CMDLINE[@]})\"#" /etc/default/grub
-  grub-mkconfig -o /boot/grub/grub.cfg
-elif type bootctl &>/dev/null; then
-  DIR="efi"
-  if [[ -d /boot/efi ]]; then
-    DIR="boot/$DIR"
-  fi
-  sed -i "/options / s/$/ $(echo ${CMDLINE[@]})/" /$DIR/loader/entries/*.conf
-fi
+# PROTECTION: Enable GRUB password
+# REASONING: Protect against trivial editing of kernel command line
+sed -i "s#GRUB_CMDLINE_LINUX=\"\"#GRUB_CMDLINE_LINUX=\"$(echo ${CMDLINE[@]})\"#" /etc/default/grub
+echo 'set superusers="admin"' >>/etc/grub.d/40_custom
+
+# Will not prompt
+echo "password_pbkdf2 admin $(grub-mkpasswd-pbkdf2 | grep grub\.pbkdf2 | cut -d' ' -f7)" >>/etc/grub.d/40_custom
+
+grub-mkconfig -o /boot/grub/grub.cfg

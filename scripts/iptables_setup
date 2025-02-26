@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 # SOURCE: https://wiki.archlinux.org/title/Simple_stateful_firewall
 
 # Load empty rules
@@ -51,6 +52,19 @@ iptables -A INPUT -p tcp -j REJECT --reject-with tcp-reset
 # Reject ICMP protocol unreachable messages
 iptables -A INPUT -j REJECT --reject-with icmp-proto-unreachable
 
+# Extra open ports
+# TODO: handle args better lol
+if [[ $@ == *"ssh"* ]]; then
+  iptables -A TCP -p tcp --dport 22 -j ACCEPT
+fi
+if [[ $@ == *"web"* ]]; then
+  iptables -A TCP -p tcp --dport 80 -j ACCEPT
+  iptables -A TCP -p tcp --dport 443 -j ACCEPT
+fi
+if [[ $@ == *"dns"* ]]; then
+  iptables -A TCP -p tcp --dport 53 -j ACCEPT
+  iptables -A UDP -p udp --dport 53 -j ACCEPT
+fi
 
 # Save rules
 if ! [[ -d /etc/trojan_horses ]]; then

@@ -49,7 +49,7 @@ AuthenticationMethods publickey
 PermitRootLogin no
 
 # Use root-configured authorized keys
-AuthorizedKeysFile /etc/ssh/authorized_keys.d/%u" >> /etc/ssh/ssh_config
+AuthorizedKeysFile /etc/ssh/authorized_keys.d/%u" >> /etc/ssh/sshd_config
 ```
 
 #### 2.1.3 Set up authorized users

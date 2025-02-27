@@ -59,7 +59,7 @@ while getopts "hDd:Ff:Mm:Ss:Ww:" opt; do
   h)
     echo "iptables helper
 
-    Usage: ./repo/scripts/iptables [OPTIONS...]
+    Usage: ./ncae-2025/scripts/iptables [OPTIONS...]
 
     General options:
       -h  Show this help message
@@ -72,11 +72,11 @@ while getopts "hDd:Ff:Mm:Ss:Ww:" opt; do
       -W  Open web ports to all hosts
 
     Host-specific options:
-      -d <IPv4 address>  Open DNS ports to specific host
-      -f <IPv4 address>  Open FTP port to specific host
-      -m <IPv4 address>  Open MySQL port to specific host
-      -s <IPv4 address>  Open SSH port to specific host
-      -w <IPv4 address>  Open web ports to specific host
+      -d <IPv4 address or subnet>  Open DNS ports to specific host
+      -f <IPv4 address or subnet>  Open FTP port to specific host
+      -m <IPv4 address or subnet>  Open MySQL port to specific host
+      -s <IPv4 address or subnet>  Open SSH port to specific host
+      -w <IPv4 address or subnet>  Open web ports to specific host
     "
     ;;
 

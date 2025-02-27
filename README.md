@@ -11,21 +11,31 @@ passwd
 apt uninstall sudo # or whichever package manager
 ```
 
-### 1.2 Setup firewall
-
-#### 1.2.1 Generic setup:
+### 1.2 Clone this repository:
 ```sh
-curl https://raw.githubusercontent.com/Liassica/ncae-2025/refs/heads/main/scripts/iptables | bash
+git clone https://github.com/Liassica/ncae-2025
 ```
 
-#### 1.2.2 Extra ports, e.g. SSH (22) & web (80, 443):
+### 1.3 Setup firewall
+
+#### 1.3.1 Generic setup:
 ```sh
-curl https://raw.githubusercontent.com/Liassica/ncae-2025/refs/heads/main/scripts/iptables | bash -S -W
+./ncae-2025/scripts/iptables
 ```
 
-#### 1.2.3 Specific host, e.g. SSH from 10.10.10.10:
+#### 1.3.2 Extra ports, e.g. SSH (22) & web (80, 443):
 ```sh
-curl https://raw.githubusercontent.com/Liassica/ncae-2025/refs/heads/main/scripts/iptables | bash -s 10.10.10.10
+./ncae-2025/scripts/iptables -S -W
+```
+
+#### 1.3.3 Specific host, e.g. SSH from 10.10.10.10:
+```sh
+./ncae-2025/scripts/iptables -s 10.10.10.10
+```
+
+#### 1.3.4 Specific subnet, e.g. web from 192.168.0.0./24
+```sh
+./ncae-2025/scripts/iptables -w 192.168.0.0/24
 ```
 
 ## 2 Competition services
@@ -74,10 +84,10 @@ See the other team members' notes and documentation :)
 
 #### 3.1.1 sysctl:
 ```sh
-curl https://raw.githubusercontent.com/Liassica/ncae-2025/refs/heads/main/scripts/sysctl | bash
+./ncae-2025/scripts/sysctl
 ```
 
 #### 3.1.2 kernel command line:
 ```sh
-curl https://raw.githubusercontent.com/Liassica/ncae-2025/refs/heads/main/scripts/cmdline | bash
+./ncae-2025/scripts/cmdline
 ```

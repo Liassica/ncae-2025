@@ -54,20 +54,33 @@ iptables -A INPUT -p tcp -j REJECT --reject-with tcp-reset
 iptables -A INPUT -j REJECT --reject-with icmp-proto-unreachable
 
 # Extra open ports
-# TODO: handle args better lol
-if [[ $@ == *"ssh"* ]]; then
-  iptables -A TCP -p tcp --dport 22 -j ACCEPT
-fi
-if [[ $@ == *"web"* ]]; then
-  iptables -A TCP -p tcp --dport 80 -j ACCEPT
-  iptables -A TCP -p tcp --dport 443 -j ACCEPT
-fi
-if [[ $@ == *"dns"* ]]; then
-  iptables -A TCP -p tcp --dport 53 -j ACCEPT
-  iptables -A UDP -p udp --dport 53 -j ACCEPT
-fi
+while getopts "Ss:Ww:Dd:" opt; do
+  case "$opt" in
+  S)
+    iptables -A TCP -p tcp --dport 22 -j ACCEPT
+    ;;
+  s)
+    iptables -A TCP -p tcp --dport 22 -s $OPTARG -j ACCEPT
+    ;;
+  W)
+    iptables -A TCP -p tcp --dport 80 -j ACCEPT
+    iptables -A TCP -p tcp --dport 443 -j ACCEPT
+    ;;
+  w)
+    iptables -A TCP -p tcp --dport 80 -s $OPTARG -j ACCEPT
+    iptables -A TCP -p tcp --dport 443 -s $OPTARG -j ACCEPT
+    ;;
+  D)
+    iptables -A TCP -p tcp --dport 53 -j ACCEPT
+    iptables -A UDP -p udp --dport 53 -j ACCEPT
+    ;;
+  d)
+    iptables -A TCP -p tcp --dport 53 -s $OPTARG -j ACCEPT
+    iptables -A UDP -p udp --dport 53 -s $OPTARG -j ACCEPT
+    ;;
+  esac
+done
 
-# Save rules
 if ! [[ -d /etc/trojan_horses ]]; then
   mkdir -p /etc/trojan_horses/
 fi

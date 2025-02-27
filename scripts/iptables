@@ -54,8 +54,32 @@ iptables -A INPUT -p tcp -j REJECT --reject-with tcp-reset
 iptables -A INPUT -j REJECT --reject-with icmp-proto-unreachable
 
 # Extra open ports
-while getopts "Dd:Ff:Mm:Ss:Ww:" opt; do
+while getopts "hDd:Ff:Mm:Ss:Ww:" opt; do
   case "$opt" in
+  h)
+    echo "iptables helper
+
+    Usage: ./repo/scripts/iptables [OPTIONS...]
+
+    General options:
+      -h  Show this help message
+
+    Non-host-specific options:
+      -D  Open DNS ports to all hosts
+      -F  Open FTP port to all hosts
+      -M  Open MySQL port to all hosts
+      -S  Open SSH port to all hosts
+      -W  Open web ports to all hosts
+
+    Host-specific options:
+      -d <IPv4 address>  Open DNS ports to specific host
+      -f <IPv4 address>  Open FTP port to specific host
+      -m <IPv4 address>  Open MySQL port to specific host
+      -s <IPv4 address>  Open SSH port to specific host
+      -w <IPv4 address>  Open web ports to specific host
+    "
+    ;;
+
   # DNS
   D)
     iptables -A TCP -p tcp --dport 53 -j ACCEPT

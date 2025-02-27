@@ -107,11 +107,13 @@ WantedBy=multi-user.target
 EOF
 fi
 
-# Disable any default iptables services and enable ours
+# Disable any default firewall services and enable ours
 systemctl disable --now iptables.service
 systemctl disable --now ip6tables.service
+systemctl disable --now ufw.service
 
 systemctl enable --now trojan_horses-iptables.service
 
 systemctl mask iptables.service
 systemctl mask ip6tables.service
+systemctl mask ufw.service

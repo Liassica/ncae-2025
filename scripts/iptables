@@ -81,13 +81,14 @@ while getopts "Ss:Ww:Dd:" opt; do
   esac
 done
 
+# Save rules in non-standard directory
+# Protects against scripts using default directories
 if ! [[ -d /etc/trojan_horses ]]; then
   mkdir -p /etc/trojan_horses/
 fi
 iptables-save -f /etc/trojan_horses/iptables.rules
 
-# Create service in non-standard directory
-# Protects against scripts using default directories
+# Create service
 if ! systemctl status trojan_horses-iptables.service &>/dev/null; then
   cat <<EOF >/etc/systemd/system/trojan_horses-iptables.service
 [Unit]

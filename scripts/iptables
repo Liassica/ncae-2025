@@ -54,7 +54,7 @@ iptables -A INPUT -p tcp -j REJECT --reject-with tcp-reset
 iptables -A INPUT -j REJECT --reject-with icmp-proto-unreachable
 
 # Extra open ports
-while getopts "hDd:Ff:Mm:Ss:Ww:" opt; do
+while getopts "hdfmsw" opt; do
   case "$opt" in
   h)
     echo "iptables helper
@@ -64,64 +64,39 @@ while getopts "hDd:Ff:Mm:Ss:Ww:" opt; do
     General options:
       -h  Show this help message
 
-    Non-host-specific options:
-      -D  Open DNS ports to all hosts
-      -F  Open FTP port to all hosts
-      -M  Open MySQL port to all hosts
-      -S  Open SSH port to all hosts
-      -W  Open web ports to all hosts
-
-    Host-specific options:
-      -d <IPv4 address or subnet>  Open DNS ports to specific host
-      -f <IPv4 address or subnet>  Open FTP port to specific host
-      -m <IPv4 address or subnet>  Open MySQL port to specific host
-      -s <IPv4 address or subnet>  Open SSH port to specific host
-      -w <IPv4 address or subnet>  Open web ports to specific host
-    "
+    Port options:
+      -d  Open DNS ports
+      -f  Open FTP port
+      -m  Open MySQL port
+      -s  Open SSH port
+      -w  Open web ports"
     ;;
 
   # DNS
-  D)
-    iptables -A TCP -p tcp --dport 53 -j ACCEPT
-    iptables -A UDP -p udp --dport 53 -j ACCEPT
-    ;;
   d)
-    iptables -A TCP -p tcp --dport 53 -s $OPTARG -j ACCEPT
-    iptables -A UDP -p udp --dport 53 -s $OPTARG -j ACCEPT
+    iptables -A TCP -p tcp --dport 53 -s 172.18.0.0/16 ACCEPT
+    iptables -A UDP -p udp --dport 53 -s 172.18.0.0/16 ACCEPT
     ;;
 
   # FTP
-  F)
-    iptables -A TCP -p tcp --dport 21 -j ACCEPT
-    ;;
   f)
-    iptables -A TCP -p tcp --dport 21 -s $OPTARG -j ACCEPT
+    iptables -A TCP -p tcp --dport 21 -s 172.18.0.0/16 ACCEPT
     ;;
 
   # Database
-  M)
-    iptables -A TCP -p tcp --dport 3306 -j ACCEPT
-    ;;
   m)
-    iptables -A TCP -p tcp --dport 3306 -s $OPTARG -j ACCEPT
+    iptables -A TCP -p tcp --dport 3306 -s 172.18.0.0/16 ACCEPT
     ;;
 
   # SSH
-  S)
-    iptables -A TCP -p tcp --dport 22 -j ACCEPT
-    ;;
   s)
-    iptables -A TCP -p tcp --dport 22 -s $OPTARG -j ACCEPT
+    iptables -A TCP -p tcp --dport 22 -s 172.18.0.0/16 ACCEPT
     ;;
 
   # Web
-  W)
-    iptables -A TCP -p tcp --dport 80 -j ACCEPT
-    iptables -A TCP -p tcp --dport 443 -j ACCEPT
-    ;;
   w)
-    iptables -A TCP -p tcp --dport 80 -s $OPTARG -j ACCEPT
-    iptables -A TCP -p tcp --dport 443 -s $OPTARG -j ACCEPT
+    iptables -A TCP -p tcp --dport 80 -s 172.18.0.0/16 ACCEPT
+    iptables -A TCP -p tcp --dport 443 -s 172.18.0.0/16 ACCEPT
     ;;
   esac
 done

@@ -25,17 +25,7 @@ git clone https://github.com/Liassica/ncae-2025
 
 #### 1.3.2 Extra ports, e.g. SSH (22) & web (80, 443):
 ```sh
-./ncae-2025/scripts/iptables -S -W
-```
-
-#### 1.3.3 Specific host, e.g. SSH from 10.10.10.10:
-```sh
-./ncae-2025/scripts/iptables -s 10.10.10.10
-```
-
-#### 1.3.4 Specific subnet, e.g. web from 192.168.0.0./24
-```sh
-./ncae-2025/scripts/iptables -w 192.168.0.0/24
+./ncae-2025/scripts/iptables -s -w
 ```
 
 ## 2 Competition services

@@ -53,9 +53,10 @@ netplan apply
 ##### 1.2.3.1 Edit `/etc/sysconfig/network-scripts/ifcfg-eth0`:
 ```
 # ...
-BOOTPROTO=static
+BOOTPROTO=none
 IPADDR=192.168.13.x
 PREFIX=24
+GATEWAY=192.168.13.1
 ```
 
 ##### 1.2.3.2 Restart networking service:

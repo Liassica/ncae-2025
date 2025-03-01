@@ -11,19 +11,72 @@ passwd
 apt uninstall sudo # or whichever package manager
 ```
 
-### 1.2 Clone this repository:
+### 1.2 IP address configuration
+
+#### 1.2.1 Kali
+
+##### 1.2.1.1 Edit `/etc/network/interfaces`:
+```
+auto eth0
+iface eth0 inet static
+address 192.168.13.x
+netmask 255.255.255.0
+gateway 192.168.13.1
+```
+
+##### 1.2.1.2 Restart networking service:
+```sh
+systemctl restart networking.service
+```
+
+#### 1.2.2 Ubuntu
+
+##### 1.2.2.1 Edit `/etc/netplan/01-network-manager-all.yaml`:
+```yaml
+network:
+  # ...
+  ethernets:
+    ens18:
+      dhcp4: false
+      addresses:
+        - 192.168.13.x/24
+      gateway4: 192.168.13.1
+```
+
+##### 1.2.2.2 Apply network settings:
+```sh
+netplan apply
+```
+
+#### 1.2.3 CentOS
+
+##### 1.2.3.1 Edit `/etc/sysconfig/network-scripts/ifcfg-eth0`:
+```
+# ...
+BOOTPROTO=static
+IPADDR=192.168.13.x
+PREFIX=24
+```
+
+##### 1.2.3.2 Restart networking service:
+```sh
+nmcli connection reload
+nmcli connection up eth0
+```
+
+### 1.3 Clone this repository:
 ```sh
 git clone https://github.com/Liassica/ncae-2025
 ```
 
-### 1.3 Setup firewall
+### 1.4 Setup firewall
 
-#### 1.3.1 Generic setup:
+#### 1.4.1 Generic setup:
 ```sh
 ./ncae-2025/scripts/iptables
 ```
 
-#### 1.3.2 Extra ports, e.g. SSH (22) & web (80, 443):
+#### 1.4.2 Extra ports, e.g. SSH (22) & web (80, 443):
 ```sh
 ./ncae-2025/scripts/iptables -s -w
 ```

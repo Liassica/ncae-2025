@@ -24,7 +24,12 @@ netmask 255.255.255.0
 gateway 192.168.13.1
 ```
 
-##### 1.2.1.2 Restart networking service:
+##### 1.2.1.2 Edit: `/etc/resolv.conf`:
+```
+nameserver 192.168.13.12
+```
+
+##### 1.2.1.3 Restart networking service:
 ```sh
 systemctl restart networking.service
 ```
@@ -41,6 +46,9 @@ network:
       addresses:
         - 192.168.13.x/24
       gateway4: 192.168.13.1
+      nameservers:
+        addresses:
+        - 192.168.13.12
 ```
 
 ##### 1.2.2.2 Apply network settings:
@@ -57,6 +65,7 @@ BOOTPROTO=none
 IPADDR=192.168.13.x
 PREFIX=24
 GATEWAY=192.168.13.1
+DNS1=192.168.13.12
 ```
 
 ##### 1.2.3.2 Restart networking service:

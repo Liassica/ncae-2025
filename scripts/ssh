@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+# SOURCE: https://score.vce2.ncaecybergames.org/scoring/checks/7a0704ef-021a-468e-9973-dde5f5d81172
+
+users=(
+  "camille_jenatzy"
+  "gaston_chasseloup"
+  "leon_serpollet"
+  "william_vanderbilt"
+  "henri_fournier"
+  "maurice_augieres"
+  "arthur_duray"
+  "henry_ford"
+  "louis_rigolly"
+  "pierre_caters"
+  "paul_baras"
+  "victor_hemery"
+  "fred_marriott"
+  "lydston_hornsted"
+  "kenelm_guinness"
+  "rene_thomas"
+  "ernest_eldridge"
+  "malcolm_campbell"
+  "ray_keech"
+  "john_cobb"
+  "dorothy_levitt"
+  "paula_murphy"
+  "betty_skelton"
+  "rachel_kushner"
+  "kitty_oneil"
+  "jessi_combs"
+  "andy_green"
+)
+
+for u in ${users[@]}; do
+  echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCcM4aDj8Y4COv+f8bd2WsrIynlbRGgDj2+q9aBeW1Umj5euxnO1vWsjfkpKnyE/ORsI6gkkME9ojAzNAPquWMh2YG+n11FB1iZl2S6yuZB7dkVQZSKpVYwRvZv2RnYDQdcVnX9oWMiGrBWEAi4jxcYykz8nunaO2SxjEwzuKdW8lnnh2BvOO9RkzmSXIIdPYgSf8bFFC7XFMfRrlMXlsxbG3u/NaFjirfvcXKexz06L6qYUzob8IBPsKGaRjO+vEdg6B4lH1lMk1JQ4GtGOJH6zePfB6Gf7rp31261VRfkpbpaDAznTzh7bgpq78E7SenatNbezLDaGq3Zra3j53u7XaSVipkW0S3YcXczhte2J9kvo6u6s094vrcQfB9YigH4KhXpCErFk08NkYAEJDdqFqXIjvzsro+2/EW1KKB9aNPSSM9EZzhYc+cBAl4+ohmEPej1m15vcpw3k+kpo1NC2rwEXIFxmvTme1A2oIZZBpgzUqfmvSPwLXF0EyfN9Lk= SCORING KEY DO NOT REMOVE" >/etc/ssh/authorized_keys.d/$u
+done

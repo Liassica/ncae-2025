@@ -108,7 +108,10 @@ AuthorizedKeysFile /etc/ssh/authorized_keys.d/%u" >> /etc/ssh/sshd_config
 
 #### 2.1.3 Set up authorized users
 
-For each scoring user, place their public SSH key in `/etc/ssh/authorized_keys.d/<user>`
+For each scoring user, place their public SSH key in `/etc/ssh/authorized_keys.d/<user>`:
+```sh
+./ncae-2025/scripts/ssh
+```
 
 #### 2.1.4 Start/restart service:
 ```sh
